@@ -1,0 +1,117 @@
+package ebook581;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmployeeDAO {
+
+    // DB Connection
+    static Connection getDBConnection() {
+        Connection connection = null;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver"); // Updated driver
+            connection = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/24wh1a0581",
+                    "root",
+                    "1234"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return connection;
+    }
+
+    // 🔹 READ
+    public List<Employee> getEmployees() {
+
+        List<Employee> list = new ArrayList<>();
+
+        try {
+            Connection con = getDBConnection();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM Employee");
+
+            while (rs.next()) {
+                list.add(new Employee(
+                        rs.getInt("empid"),
+                        rs.getString("name"),
+                        rs.getInt("salary"),
+                        rs.getString("department")
+                ));
+            }
+            con.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // 🔹 INSERT
+    public boolean addEmployee(Employee emp) {
+        boolean status = false;
+
+        try {
+            Connection con = getDBConnection();
+            String query = "INSERT INTO Employee VALUES (?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setInt(1, emp.getEmpid());
+            ps.setString(2, emp.getName());
+            ps.setInt(3, emp.getSalary());
+            ps.setString(4, emp.getDepartment());
+
+            status = ps.executeUpdate() > 0;
+            con.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    // 🔹 UPDATE
+    public boolean updateEmployee(Employee emp) {
+        boolean status = false;
+
+        try {
+            Connection con = getDBConnection();
+            String query = "UPDATE Employee SET name=?, salary=?, department=? WHERE empid=?";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setString(1, emp.getName());
+            ps.setInt(2, emp.getSalary());
+            ps.setString(3, emp.getDepartment());
+            ps.setInt(4, emp.getEmpid());
+
+            status = ps.executeUpdate() > 0;
+            con.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    // 🔹 DELETE
+    public boolean deleteEmployee(int empid) {
+        boolean status = false;
+
+        try {
+            Connection con = getDBConnection();
+            String query = "DELETE FROM Employee WHERE empid=?";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setInt(1, empid);
+
+            status = ps.executeUpdate() > 0;
+            con.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+}
