@@ -1,0 +1,21 @@
+public boolean addEmployee(Employee emp) {
+        boolean status = false;
+
+        try {
+            Connection con = getDBConnection();
+            String query = "INSERT INTO Employee VALUES (?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setInt(1, emp.getEmpid());
+            ps.setString(2, emp.getName());
+            ps.setInt(3, emp.getSalary());
+            ps.setString(4, emp.getDepartment());
+
+            status = ps.executeUpdate() > 0;
+            con.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
