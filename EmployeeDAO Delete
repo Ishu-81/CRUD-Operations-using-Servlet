@@ -1,0 +1,19 @@
+public boolean deleteEmployee(int empid) {
+        boolean status = false;
+
+        try {
+            Connection con = getDBConnection();
+            String query = "DELETE FROM Employee WHERE empid=?";
+            PreparedStatement ps = con.prepareStatement(query);
+
+            ps.setInt(1, empid);
+
+            status = ps.executeUpdate() > 0;
+            con.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+}
